@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { auth } from '../../firebase.init';
 import { FaEye } from 'react-icons/fa';
 import { FaEyeSlash } from 'react-icons/fa6';
+import { Link } from 'react-router-dom';
 
 const SignUp = () => {
 
@@ -107,6 +108,8 @@ const SignUp = () => {
             {
                 successMessage && <p className='text-green-700 font-bold text-xl '>Sign Up is Successful. </p>
             }
+
+            <p className='text-purple-700 font-bold text-lg p-3' >Already have an account? Please <Link to='/login' >Login</Link> </p>
 
         </div>
     );
