@@ -4,6 +4,7 @@ import { auth } from '../../firebase.init';
 
 const SignUp = () => {
 
+    const [successMessage, setSuccessMessage] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
 
     const handleSignUp = e =>{
@@ -14,15 +15,32 @@ const password = e.target.password.value ;
 
 // reset error and status
 setErrorMessage('');
+setSuccessMessage(false)
+
+console.log(typeof(password))
+if(password.length < 6){
+    setErrorMessage('Password should be 6 characters or longer');
+    return ;
+}
+
+const passwordRegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/ ;
+
+if(!passwordRegEx.test(password)){
+setErrorMessage('Your Password should be contain at least one UpperCase, one LowerCase, one Special Character, one Number, and at least 6 character!! ');
+return;
+}
+
 
 createUserWithEmailAndPassword(auth, email, password) 
 .then(value =>{
     console.log(value)
+    setSuccessMessage(true)
 })
 
 .catch(error=>{
     console.log('Error:' , error)
     setErrorMessage(error.message)
+    setSuccessMessage(false)
 })
 
     }
@@ -57,6 +75,10 @@ createUserWithEmailAndPassword(auth, email, password)
 
 {
     errorMessage && <p className='text-red-700 font-semibold text-xl'>{errorMessage}</p>
+}
+
+{
+    successMessage && <p className='text-green-700 font-bold text-xl '>Sign Up is Successful. </p>
 }
 
         </div>
