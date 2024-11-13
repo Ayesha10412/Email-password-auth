@@ -1,47 +1,55 @@
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import React, { useState } from 'react';
 import { auth } from '../../firebase.init';
+import { FaEye } from 'react-icons/fa';
+import { FaEyeSlash } from 'react-icons/fa6';
 
 const SignUp = () => {
 
     const [successMessage, setSuccessMessage] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
+    const [showPassword, setShowPassword] = useState(false)
 
-    const handleSignUp = e =>{
+    const handleSignUp = e => {
 
-e.preventDefault();
-const email = e.target.email.value;
-const password = e.target.password.value ;
+        e.preventDefault();
+        const email = e.target.email.value;
+        const password = e.target.password.value;
+        const terms = e.target.terms.checked ;
 
-// reset error and status
-setErrorMessage('');
-setSuccessMessage(false)
+        // reset error and status
+        setErrorMessage('');
+        setSuccessMessage(false)
 
-console.log(typeof(password))
-if(password.length < 6){
-    setErrorMessage('Password should be 6 characters or longer');
-    return ;
-}
+        console.log(typeof (password))
+        if (password.length < 6) {
+            setErrorMessage('Password should be 6 characters or longer');
+            return;
+        }
 
-const passwordRegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/ ;
+        const passwordRegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
 
-if(!passwordRegEx.test(password)){
-setErrorMessage('Your Password should be contain at least one UpperCase, one LowerCase, one Special Character, one Number, and at least 6 character!! ');
-return;
-}
+        if (!passwordRegEx.test(password)) {
+            setErrorMessage('Your Password should be contain at least one UpperCase, one LowerCase, one Special Character, one Number, and at least 6 character!! ');
+            return;
+        }
 
+        if(!terms){
+            setErrorMessage('Please accept our terms and conditions!');
+            return ;
+        }
 
-createUserWithEmailAndPassword(auth, email, password) 
-.then(value =>{
-    console.log(value)
-    setSuccessMessage(true)
-})
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(value => {
+                console.log(value)
+                setSuccessMessage(true)
+            })
 
-.catch(error=>{
-    console.log('Error:' , error)
-    setErrorMessage(error.message)
-    setSuccessMessage(false)
-})
+            .catch(error => {
+                console.log('Error:', error)
+                setErrorMessage(error.message)
+                setSuccessMessage(false)
+            })
 
     }
 
@@ -51,35 +59,54 @@ createUserWithEmailAndPassword(auth, email, password)
             <h2 className='text-3xl mb-6 font-bold'> Sign Up Now!! </h2>
 
             <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-      <form onSubmit={handleSignUp} className="card-body">
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text">Email</span>
-          </label>
-          <input type="email" name='email' placeholder="email" className="input input-bordered" required />
-        </div>
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text">Password</span>
-          </label>
-          <input type="password" name='password' placeholder="password" className="input input-bordered" required />
-          <label className="label">
-            <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
-          </label>
-        </div>
-        <div className="form-control mt-6">
-          <button className="btn btn-primary">Sign Up</button>
-        </div>
-      </form>
-    </div>
+                <form onSubmit={handleSignUp} className="card-body">
+                    <div className="form-control">
+                        <label className="label">
+                            <span className="label-text">Email</span>
+                        </label>
+                        <input type="email" name='email' placeholder="email" className="input input-bordered" required />
+                    </div>
+                    <div className="form-control relative ">
+                        <label className="label">
+                            <span className="label-text">Password</span>
+                        </label>
+                        <input type={showPassword ? 'text' : 'password'}
+                            name='password'
+                            placeholder="password"
+                            className="input input-bordered" required />
 
-{
-    errorMessage && <p className='text-red-700 font-semibold text-xl'>{errorMessage}</p>
-}
+                        <button
+                            onClick={() => setShowPassword(!showPassword)}
+                            className='btn btn-xs absolute right-4 top-12 text-lg '>
+                            {
+                                showPassword ? <FaEyeSlash></FaEyeSlash> : <FaEye></FaEye>
+                            }
+                        </button>
+                        <label className="label">
+                            <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
+                        </label>
+                    </div>
 
-{
-    successMessage && <p className='text-green-700 font-bold text-xl '>Sign Up is Successful. </p>
-}
+                    <div className="form-control">
+                        <label className="label justify-start gap-2 cursor-pointer">
+                        <input type="checkbox" name='terms' className="checkbox" />
+                            <span className="label-text ">Accept Our Terms and Conditions.</span>
+                        </label>
+                    </div>
+
+                    <div className="form-control mt-6">
+                        <button className="btn btn-primary">Sign Up</button>
+                    </div>
+                </form>
+            </div>
+
+            {
+                errorMessage && <p className='text-red-700 font-semibold text-xl'>{errorMessage}</p>
+            }
+
+            {
+                successMessage && <p className='text-green-700 font-bold text-xl '>Sign Up is Successful. </p>
+            }
 
         </div>
     );
